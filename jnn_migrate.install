@@ -1,0 +1,17 @@
+<?php
+
+/*
+ * Implements hook_install().
+ */
+function jnn_migrate_install() {
+  // Enable signatures by default
+  variable_set('user_signatures', 1);
+}
+
+/*
+ * Implements hook_uninstall().
+ */
+function jnn_migrate_uninstall() {
+
+}
+

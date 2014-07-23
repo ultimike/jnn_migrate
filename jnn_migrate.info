@@ -1,0 +1,22 @@
+name = "JeepNewsNow Migration"
+description = "Module to migrate JeepNewsNow content from XOOPS to Drupal 7"
+package = "JeepNewsNow"
+core = 7.x
+
+dependencies[] = migrate
+dependencies[] = bbcode
+dependencies[] = redirect
+dependencies[] = field
+dependencies[] = file
+dependencies[] = image
+dependencies[] = number
+dependencies[] = text
+dependencies[] = options
+dependencies[] = taxonomy
+dependencies[] = link
+dependencies[] = statistics
+dependencies[] = views
+
+files[] = jnn_migrate.module
+files[] = jnn_migrate_user.inc
+files[] = jnn_migrate_node.inc
