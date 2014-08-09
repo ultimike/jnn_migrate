@@ -167,7 +167,7 @@ class JnnAvatarMigration extends JnnMigration {
     $this->addFieldMapping('source_dir')
       ->defaultValue('public://' . 'legacy/avatars');
     $this->addFieldMapping('destination_dir')
-      ->defaultValue('public://' . variable_get('user_picture_path', 'pictures') . '/');
+      ->defaultValue('public://' . variable_get('user_picture_path', 'pictures'));
     $this->addFieldMapping('file_replace')
       ->defaultValue('FILE_EXISTS_REUSE');  // If the file already exists in the destination, reuse it.
     $this->addFieldMapping('preserve_files')
