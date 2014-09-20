@@ -155,6 +155,8 @@ class JnnAvatarMigration extends JnnMigration {
       ),
       MigrateDestinationFile::getKeySchema()
     );
+    
+    // TODO: Add a check to ensure the file exists. See http://kevinquillen.com/drupal/2014/07/08/media-migrate-trick/
 
     // Drupal core picture field (not using Field API) simply links from the users table to a file
     //   in the file_managed table, so all we need to to is upload our avatar images to there.
