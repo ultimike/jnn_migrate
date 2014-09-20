@@ -180,6 +180,9 @@ class JnnArticleMigration extends JnnMigration {
     //   The Redirect module has a "Retain query string through redirect" setting.
     //
     // This has to be done in "complete()" rather than "prepareRow()" because we need the nid for the redirect.
+    
+    // TODO: Move this into the parent class. See http://kevinquillen.com/drupal/2014/07/02/add-redirect-during-migration/
+    
     $redirect = new stdClass();
     $redirect->source = 'modules/news/article.php';
     $redirect->source_options = array(
