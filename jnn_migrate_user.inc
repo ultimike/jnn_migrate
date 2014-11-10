@@ -31,7 +31,18 @@ abstract class JnnMigration extends DynamicMigration {
       'prefix' => '',
       'port' => '3306',
     ));
-
+    /*
+    // Acquia Dev Desktop 2
+    Database::addConnectionInfo('jeepnewsnow_xoops', 'default', array(
+      'driver' => 'mysql',
+      'database' => 'jeepnewsnow_xoops_subset',
+      'username' => 'root',
+      'password' => '',
+      'host' => '127.0.0.1',
+      'prefix' => '',
+      'port' => '33067',
+    ));
+    */
     // With migrate_ui enabled, migration pages will indicate people involved in
     // the particular migration, with their role and contact info. We default the
     // list in the shared class; it can be overridden for specific migrations.
@@ -99,6 +110,7 @@ class JnnUserMigration extends JnnMigration {
          ->description(t('Can we translate a timezone like "-5.0" to a D7 timezone string?'))
          ->issueNumber(1234)
          ->issueGroup(t('Incomplete'));
+
     $this->addFieldMapping('signature', 'user_sig');
     $this->addFieldMapping('signature_format')
          ->defaultValue('plain_text');  // This is the text format we want to assign to all signatures.
@@ -106,7 +118,8 @@ class JnnUserMigration extends JnnMigration {
     // Map the uid to the picture field because the JnnAvatar migration translates it 
     //   into the proper file id. The Drupal 7 "picture" field expects a File ID (fid).
     $this->addFieldMapping('picture', 'uid')
-         ->sourceMigration('JnnAvatar');
+         ->sourceMigration('JnnAvatar')
+         ->description('Via the JnnAvatar map table.');
 
     // Unmapped source fields
     $this->addUnmigratedSources(array('name', 'user_mailok', 'timezone_offset', 'user_avatar'));
@@ -155,7 +168,7 @@ class JnnAvatarMigration extends JnnMigration {
       ),
       MigrateDestinationFile::getKeySchema()
     );
-    
+
     // TODO: Add a check to ensure the file exists. See http://kevinquillen.com/drupal/2014/07/08/media-migrate-trick/
 
     // Drupal core picture field (not using Field API) simply links from the users table to a file
@@ -163,13 +176,16 @@ class JnnAvatarMigration extends JnnMigration {
     //   Download and enable the File Entity module to add a "Files" page under the
     //   main admin "Content" area.
     //$this->addFieldMapping('destination_field', 'source_field');
+    
+    // Don't map the uid, instead, let Drupal assign the uid=0 to the file.
     //$this->addFieldMapping('uid', 'uid');
     $this->addFieldMapping('value', 'user_avatar');
 
     $this->addFieldMapping('source_dir')
       ->defaultValue('public://' . 'legacy/avatars');
     $this->addFieldMapping('destination_dir')
-      ->defaultValue('public://' . variable_get('user_picture_path', 'pictures'));
+      ->defaultValue('public://' . variable_get('user_picture_path', 'pictures'))
+      ->description('Using default pictures file location.');
     $this->addFieldMapping('file_replace')
       ->defaultValue('FILE_EXISTS_REUSE');  // If the file already exists in the destination, reuse it.
     $this->addFieldMapping('preserve_files')
@@ -177,7 +193,7 @@ class JnnAvatarMigration extends JnnMigration {
     // All source fields mapped
 
     // Unmapped destination fields
-    $this->addUnmigratedDestinations(array('uid', 'destination_file', 'timestamp'));
+    $this->addUnmigratedDestinations(array('destination_file', 'timestamp'));
   }
 
 }
