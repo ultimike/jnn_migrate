@@ -3,14 +3,13 @@
 /**
  * Class JnnMigration
  *
- * An abstract class that extends the basic Migrate DynamicMigration class and encapsulates
+ * An abstract class that extends the basic Migrate module Migration class and encapsulates
  *  information specific to all of the JeepNewsNow migration classes, including the database
  *  connection, team members, and issue URL pattern.
  */
-abstract class JnnMigration extends DynamicMigration {
-  public function __construct($group = null) {
-    // Always call the parent constructor first for basic setup
-    parent::__construct($group);
+abstract class JnnMigration extends Migration {
+  public function __construct($arguments) {
+    parent::__construct($arguments);
 
     // This is the database connection information for the source database. 
     //
@@ -64,14 +63,10 @@ abstract class JnnMigration extends DynamicMigration {
  * Used to migrate users.
  */
 class JnnUserMigration extends JnnMigration {
-  public function __construct() {
-    // Call the parent constructor and put this migration in a migration group.
-    parent::__construct(MigrateGroup::getInstance('jnn_users'));
+  public function __construct($arguments) {
+    parent::__construct($arguments);
     
     $this->description = t('JeepNewsNow Users from the wonderful XOOPS CMS.');
-    
-    // Ensure the avatar image files are migrated before the users.
-    $this->dependencies = array('JnnAvatar');
 
     // Set up the migration source by creating a query to get the user data we need.
     $query = Database::getConnection('default', 'jeepnewsnow_xoops')
@@ -109,7 +104,8 @@ class JnnUserMigration extends JnnMigration {
          ->defaultValue('America/New_York')
          ->description(t('Can we translate a timezone like "-5.0" to a D7 timezone string?'))
          ->issueNumber(1234)
-         ->issueGroup(t('Incomplete'));
+         ->issueGroup(t('Incomplete'))
+         ->issuePriority(MigrateFieldMapping::ISSUE_PRIORITY_MEDIUM);
 
     $this->addFieldMapping('signature', 'user_sig');
     $this->addFieldMapping('signature_format')
@@ -136,9 +132,8 @@ class JnnUserMigration extends JnnMigration {
  * Used to migrate user avatars.
  */
 class JnnAvatarMigration extends JnnMigration {
-  public function __construct() {
-    // Call the parent constructor and put this migration in a migration group.
-    parent::__construct(MigrateGroup::getInstance('jnn_users'));
+  public function __construct($arguments) {
+    parent::__construct($arguments);
     $this->description = t('Migrates non-blank user avatar images.');
 
     // Set up the migration source by creating a query to get the user data we need.
@@ -178,7 +173,8 @@ class JnnAvatarMigration extends JnnMigration {
     //$this->addFieldMapping('destination_field', 'source_field');
     
     // Don't map the uid, instead, let Drupal assign the uid=0 to the file.
-    //$this->addFieldMapping('uid', 'uid');
+    $this->addFieldMapping('uid')
+      ->defaultValue(0);
     $this->addFieldMapping('value', 'user_avatar');
 
     $this->addFieldMapping('source_dir')
@@ -193,7 +189,13 @@ class JnnAvatarMigration extends JnnMigration {
     // All source fields mapped
 
     // Unmapped destination fields
-    $this->addUnmigratedDestinations(array('destination_file', 'timestamp'));
+    $this->addUnmigratedDestinations(array('destination_file', 'timestamp', 'urlencode'));
+    
+    $destination_fields = $this->destination->fields();
+    if (isset($destination_fields['path'])) {
+      $this->addFieldMapping('path')
+        ->issueGroup(t('DNM'));
+    }
   }
 
 }

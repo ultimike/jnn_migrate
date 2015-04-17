@@ -8,9 +8,8 @@
  * The JnnTopicMigration populates the "Categories" vocabulary.
  */
 class JnnTopicMigration extends JnnMigration {
-  public function __construct() {
-    // Call the parent constructor and put this migration in a migration group.
-    parent::__construct(MigrateGroup::getInstance('jnn_taxonomy'));
+  public function __construct($arguments) {
+    parent::__construct($arguments);
     $this->description = t('Migrate story topics to the "categories" vocabulary in Drupal.');
 
     // Set up the migration source by creating a query to get the user data we need.
@@ -59,13 +58,9 @@ class JnnTopicMigration extends JnnMigration {
  * The JnnArticleMigration creates nodes of type "article" from XOOPS "stories".
  */
 class JnnArticleMigration extends JnnMigration {
-  public function __construct() {
-    // Call the parent constructor and put this migration in a migration group.
-    parent::__construct(MigrateGroup::getInstance('jnn_nodes'));
+  public function __construct($arguments) {
+    parent::__construct($arguments);
     $this->description = t('JeepNewsNow News articles');
-    
-    // Ensure users and topics are migrated before articles.
-    $this->dependencies = array('JnnUser', 'JnnTopic');
 
     // Set up the migration source by creating a query to get the user data we need.
     $query = Database::getConnection('default', 'jeepnewsnow_xoops')
@@ -201,12 +196,9 @@ class JnnArticleMigration extends JnnMigration {
  * The JnnCommentMigration creates comments to Drupal "articles" from XOOPS "stories".
  */
 class JnnCommentMigration extends JnnMigration {
-  public function __construct() {
-    // Call the parent constructor and put this migration in a migration group.
-    parent::__construct(MigrateGroup::getInstance('jnn_comments'));
+  public function __construct($arguments) {
+    parent::__construct($arguments);
     $this->description = t('JeepNewsNow comments');
-    // Ensure users and articles are migrated before comments.
-    $this->dependencies = array('JnnUser', 'JnnArticle');
 
     // Set up the migration source by creating a query to get the user data we need.
     $query = Database::getConnection('default', 'jeepnewsnow_xoops')

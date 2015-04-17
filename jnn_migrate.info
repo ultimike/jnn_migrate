@@ -18,5 +18,6 @@ dependencies[] = statistics
 dependencies[] = views
 
 files[] = jnn_migrate.module
+files[] = jnn_migrate.migrate.inc
 files[] = jnn_migrate_user.inc
 files[] = jnn_migrate_node.inc
